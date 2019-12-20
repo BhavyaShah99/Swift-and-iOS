@@ -11,9 +11,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet var filterbtn: UIButton!
     @IBOutlet var comparebtn: UIButton!
     @IBOutlet var sharebtn: UIButton!
+    @IBOutlet var intensityView: UIView!
+    @IBOutlet var editSlider: UISlider!
     
     var originalImg : UIImage?
     var filteredImg : UIImage?
+    var currFilter : String?
+    var filterSliderVal : Double = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,15 +25,52 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         originalImg = mainImgView.image
         filterView.backgroundColor = UIColor.white.withAlphaComponent(0.5)
         filterView.translatesAutoresizingMaskIntoConstraints = false
-        
-        if (mainImgView.image == originalImg) {
-            comparebtn.isEnabled = false
-        }
+        intensityView.backgroundColor = nil
+        intensityView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    @IBAction func newPhoto(_ sender: UIButton) {
+        let newPhotosAction = UIAlertController(title: "Select Photo", message: nil, preferredStyle: .actionSheet)
+        newPhotosAction.addAction(UIAlertAction(title: "Camera", style: .default, handler: { action in
+            self.bringUpCamera()
+        }))
+        newPhotosAction.addAction(UIAlertAction(title: "Photos", style: .default, handler: { action in
+            self.bringUpAlbum()
+        }))
+        newPhotosAction.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil ))
+        self.present(newPhotosAction, animated: true, completion: nil)
+    }
+    
+    func bringUpCamera() {
+        let camera = UIImagePickerController()
+        camera.delegate = self
+        camera.sourceType = .camera
+        present(camera, animated: true, completion: nil)
+        originalImg = mainImgView.image
+    }
+    
+    func bringUpAlbum() {
+        let camera = UIImagePickerController()
+        camera.delegate = self
+        camera.sourceType = .photoLibrary
+        present(camera, animated: true, completion: nil)
+        originalImg = mainImgView.image
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        dismiss(animated: true, completion: nil)
+        let pickedImg = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+        mainImgView.image = pickedImg
+        originalImg = mainImgView.image
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
     }
 
     @IBAction func filterClick(_ sender: UIButton) {
@@ -37,6 +78,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             hideFilterVew()
             sender.isSelected = false
         } else {
+            hideIntensityView()
             showFilterView()
             sender.isSelected = true
         }
@@ -56,24 +98,66 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         filterView.removeFromSuperview()
     }
     
-    @IBAction func redFilter(_ sender: UIButton) {
-        
-    }
-    
-    @IBAction func greenFilter(_ sender: Any) {
-    
-    }
-    
     @IBAction func sepiaFilter(_ sender: UIButton) {
-        filteredImg = sepiaFilter(image: originalImg!)
-        mainImgView.image = filteredImg
-        comparebtn.isEnabled = true
+        editSlider.minimumValue = -0.5
+        editSlider.maximumValue = 1
+        editSlider.value = 0.3
+        currFilter = "sepia"
+        UIView.animate(withDuration: 1, animations: {
+            self.filteredImg = self.sepiaFilter(image: self.originalImg!, intensity: 0)
+            self.mainImgView.image = self.filteredImg
+            self.comparebtn.isEnabled = true
+        })
+    }
+    
+    
+    func sepiaFilter(image : UIImage, intensity : Double) -> UIImage {
+        let rgbaImage = RGBAImage(image: image)!
+        for y in 0..<rgbaImage.height {
+            for x in 0..<rgbaImage.width {
+                let index = y * rgbaImage.width + x
+                var pixel = rgbaImage.pixels[index]
+                let rVal = pixel.red
+                let gVal = pixel.green
+                let bVal = pixel.blue
+                let newR = (Double(rVal) * (0.393+intensity)) + (Double(gVal) * (0.769+intensity)) + (Double(bVal) * (0.189+intensity))
+                let newG = (Double(rVal) * (0.349+intensity)) + (Double(gVal) * (0.686+intensity)) + (Double(bVal) * (0.168+intensity))
+                let newB = (Double(rVal) * (0.272+intensity)) + (Double(gVal) * (0.534+intensity)) + (Double(bVal) * (0.171+intensity))
+                pixel.red = UInt8(max(min(255,newR),0))
+                pixel.green = UInt8(max(min(255,newG),0))
+                pixel.blue = UInt8(max(min(255,newB),0))
+                rgbaImage.pixels[index] = pixel
+            }
+        }
+        return rgbaImage.toUIImage()!
     }
     
     @IBAction func greyscaleFilter(_ sender: UIButton) {
-        filteredImg = greyScale(image: originalImg!)
-        mainImgView.image = filteredImg
-        comparebtn.isEnabled = true
+        editSlider.minimumValue = 0
+        editSlider.maximumValue = 40
+        editSlider.value = 20
+        currFilter = "grey"
+        UIView.animate(withDuration: 1, animations: {
+            self.filteredImg = self.greyScale(image: self.originalImg!, intensity: 3)
+            self.mainImgView.image = self.filteredImg
+            self.comparebtn.isEnabled = true
+        })
+    }
+    
+    func greyScale(image : UIImage, intensity : Double) -> UIImage {
+        let rgbaImage = RGBAImage(image: image)!
+        for y in 0..<rgbaImage.height {
+            for x in 0..<rgbaImage.width {
+                let index = y * rgbaImage.width + x
+                var pixel = rgbaImage.pixels[index]
+                let avgColor = Double(Int(pixel.red) + Int(pixel.green) + Int(pixel.blue)) / intensity
+                pixel.red = UInt8(avgColor)
+                pixel.green = UInt8(avgColor)
+                pixel.blue = UInt8(avgColor)
+                rgbaImage.pixels[index] = pixel
+            }
+        }
+        return rgbaImage.toUIImage()!
     }
     
     @IBAction func compare(_ sender: UIButton) {
@@ -86,48 +170,39 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
     }
     
-    func redFilter(image : UIImage) {
-        
-    }
-    
-    func greenFilter(image : UIImage) {
-        
-    }
-    
-    func sepiaFilter(image : UIImage) -> UIImage {
-        let rgbaImage = RGBAImage(image: image)!
-        for y in 0..<rgbaImage.height {
-            for x in 0..<rgbaImage.width {
-                let index = y * rgbaImage.width + x
-                var pixel = rgbaImage.pixels[index]
-                let rVal = pixel.red
-                let gVal = pixel.green
-                let bVal = pixel.blue
-                let newR = (Double(rVal) * 0.393) + (Double(gVal) * 0.769) + (Double(bVal) * 0.189)
-                let newG = (Double(rVal) * 0.349) + (Double(gVal) * 0.686) + (Double(bVal) * 0.168)
-                let newB = (Double(rVal) * 0.272) + (Double(gVal) * 0.534) + (Double(bVal) * 0.171)
-                pixel.red = UInt8(max(min(255,newR),0))
-                pixel.green = UInt8(max(min(255,newG),0))
-                pixel.blue = UInt8(max(min(255,newB),0))
-                rgbaImage.pixels[index] = pixel
-            }
+    @IBAction func filterIntensity(_ sender: UIButton) {
+        if(sender.isSelected){
+            hideIntensityView()
+            sender.isSelected = false
+        } else {
+            hideFilterVew()
+            showIntensityView()
+            sender.isSelected = true
         }
-        return rgbaImage.toUIImage()!
     }
     
-    func greyScale(image : UIImage) -> UIImage {
-        let rgbaImage = RGBAImage(image: image)!
-        for y in 0..<rgbaImage.height {
-            for x in 0..<rgbaImage.width {
-                let index = y * rgbaImage.width + x
-                var pixel = rgbaImage.pixels[index]
-                let avgColor = Double(Int(pixel.red) + Int(pixel.green) + Int(pixel.blue)) / 3.0
-                pixel.red = UInt8(avgColor)
-                pixel.green = UInt8(avgColor)
-                pixel.blue = UInt8(avgColor)
-                rgbaImage.pixels[index] = pixel
-            }
+    func showIntensityView() {
+        view.addSubview(intensityView)
+        let leftConst = intensityView.leftAnchor.constraint(equalTo: view.leftAnchor)
+        let rightConst = intensityView.rightAnchor.constraint(equalTo: view.rightAnchor)
+        let bottomConst = intensityView.bottomAnchor.constraint(equalTo: bottomView.topAnchor)
+        let height = intensityView.heightAnchor.constraint(equalToConstant: 44)
+        NSLayoutConstraint.activate([bottomConst, leftConst, rightConst, height])
+        view.layoutIfNeeded()
+    }
+    
+    func hideIntensityView() {
+        intensityView.removeFromSuperview()
+    }
+    
+    @IBAction func filterSlider(_ sender: UISlider) {
+        switch currFilter {
+        case "sepia":
+            mainImgView.image = sepiaFilter(image: originalImg!, intensity: Double(sender.value))
+        case "grey":
+            mainImgView.image = greyScale(image: originalImg!, intensity: Double(sender.value))
+        default:
+            filterSliderVal = 0
         }
-        return rgbaImage.toUIImage()!
     }
 }
