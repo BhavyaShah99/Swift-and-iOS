@@ -111,6 +111,43 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         filterView.removeFromSuperview()
     }
     
+    @IBAction func red(_ sender: UIImage) {
+        editSlider.minimumValue = -10
+        editSlider.maximumValue = 1000
+        editSlider.value = 400
+        currFilter = "red"
+        editOptionbtn.isEnabled = true
+        UIView.animate(withDuration: 1, animations: {
+            self.filteredImg = self.red(image: self.originalImg!, intensity: 0)
+            self.mainImgView.image = self.filteredImg
+            self.comparebtn.isEnabled = true
+        })
+    }
+    
+    func red(image: UIImage, intensity: Double) -> UIImage {
+        let rgbaImage = RGBAImage(image: image)!
+        var tred = 0
+        for y in 0..<rgbaImage.height {
+            for x in 0..<rgbaImage.width {
+                let index = y * rgbaImage.width + x
+                let pixel = rgbaImage.pixels[index]
+                tred += Int(pixel.red)
+            }
+        }
+        let avgRed = tred / (rgbaImage.width * rgbaImage.height)
+        for y in 0..<rgbaImage.height {
+            for x in 0..<rgbaImage.width {
+                let index = y * rgbaImage.width + x
+                var pixel = rgbaImage.pixels[index]
+                pixel.red = UInt8(max(min(255,Double(avgRed)),0))
+                pixel.green = UInt8(max(min(255,Double(avgRed)),0))
+                pixel.blue = UInt8(max(min(255,Double(avgRed)),0))
+                rgbaImage.pixels[index] = pixel
+            }
+        }
+        return rgbaImage.toUIImage()!
+    }
+    
     @IBAction func contrast(_ sender: UIButton) {
         editSlider.minimumValue = -10
         editSlider.maximumValue = 1000
@@ -272,6 +309,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             mainImgView.image = greyScale(image: originalImg!, intensity: Double(sender.value))
         case "contrast":
             mainImgView.image = incContrast(image: originalImg!, intensity: Double(sender.value))
+        case "red":
+            mainImgView.image = red(image: originalImg!, intensity: Double(sender.value))
         default:
             filterSliderVal = 0
         }
