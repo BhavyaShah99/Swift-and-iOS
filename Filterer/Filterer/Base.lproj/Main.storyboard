@@ -122,26 +122,35 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <view contentMode="scaleToFill" id="KU8-ct-Jxq">
-                    <rect key="frame" x="0.0" y="0.0" width="499" height="100"/>
+                    <rect key="frame" x="0.0" y="0.0" width="743" height="100"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="TFQ-Rz-Vhs">
-                            <rect key="frame" x="0.0" y="-5" width="499" height="110"/>
+                            <rect key="frame" x="0.0" y="-5" width="743" height="110"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jKd-WI-TzT">
-                                    <rect key="frame" x="0.0" y="0.0" width="125" height="110"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="148.5" height="110"/>
                                     <state key="normal" title="Red">
                                         <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </state>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qwl-Ic-PAU">
-                                    <rect key="frame" x="125" y="0.0" width="124.5" height="110"/>
+                                    <rect key="frame" x="148.5" y="0.0" width="148.5" height="110"/>
                                     <state key="normal" title="Green">
                                         <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </state>
                                 </button>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OtM-CG-Yit">
+                                    <rect key="frame" x="297" y="0.0" width="149" height="110"/>
+                                    <state key="normal" title="Contrast">
+                                        <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="contrast:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ZXd-5b-Bvw"/>
+                                    </connections>
+                                </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OFa-hJ-UvW">
-                                    <rect key="frame" x="249.5" y="0.0" width="125" height="110"/>
+                                    <rect key="frame" x="446" y="0.0" width="148.5" height="110"/>
                                     <state key="normal" title="Greayscale">
                                         <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </state>
@@ -150,7 +159,7 @@
                                     </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Yf-tl-xiX">
-                                    <rect key="frame" x="374.5" y="0.0" width="124.5" height="110"/>
+                                    <rect key="frame" x="594.5" y="0.0" width="148.5" height="110"/>
                                     <state key="normal" title="Sepia">
                                         <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </state>

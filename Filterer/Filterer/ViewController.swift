@@ -111,9 +111,20 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         filterView.removeFromSuperview()
     }
     
+    @IBAction func contrast(_ sender: UIButton) {
+        editSlider.minimumValue = -10
+        editSlider.maximumValue = 1000
+        editSlider.value = 400
+        currFilter = "contrast"
+        editOptionbtn.isEnabled = true
+        UIView.animate(withDuration: 1, animations: {
+            self.filteredImg = self.incContrast(image: self.originalImg!, intensity: 0)
+            self.mainImgView.image = self.filteredImg
+            self.comparebtn.isEnabled = true
+        })
+    }
+    
     func incContrast(image: UIImage, intensity: Double) -> (UIImage) {
-        
-        
         let rgbaImage = RGBAImage(image: image)!
         var tRed = 0
         var tGreen = 0
@@ -127,13 +138,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 tBlue += Int(pixel.blue)
             }
         }
-        
         let pCount = rgbaImage.width * rgbaImage.height
         let avgRed = tRed / pCount
         let avgGreen = tGreen / pCount
         let avgBlue = tBlue / pCount
         let sum = avgRed + avgGreen + avgBlue
-        
         for y in 0..<rgbaImage.height {
             for x in 0..<rgbaImage.width {
                 let index = y * rgbaImage.width + x
@@ -143,8 +152,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 let bDelta = Double(pixel.blue) - Double(avgBlue)
                 //initialized with passed or default Contrast Value
                 var modifier = intensity
-                if(Int(pixel.red) + Int(pixel.green) + Int(pixel.blue) < sum )
-                {
+                if(Int(pixel.red) + Int(pixel.green) + Int(pixel.blue) < sum ){
                     modifier = 1
                 }
                 pixel.red = UInt8(max(min(255,Double(avgRed) + modifier * rDelta),0))
@@ -192,9 +200,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func greyscaleFilter(_ sender: UIButton) {
-        editSlider.minimumValue = 0
+        editSlider.minimumValue = -5
         editSlider.maximumValue = 40
-        editSlider.value = 20
+        editSlider.value = 15
         currFilter = "grey"
         editOptionbtn.isEnabled = true
         UIView.animate(withDuration: 1, animations: {
@@ -262,6 +270,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             mainImgView.image = sepiaFilter(image: originalImg!, intensity: Double(sender.value))
         case "grey":
             mainImgView.image = greyScale(image: originalImg!, intensity: Double(sender.value))
+        case "contrast":
+            mainImgView.image = incContrast(image: originalImg!, intensity: Double(sender.value))
         default:
             filterSliderVal = 0
         }
