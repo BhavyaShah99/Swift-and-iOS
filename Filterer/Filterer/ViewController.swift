@@ -4,6 +4,7 @@ import UIKit
 
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
+    @IBOutlet var ogTxtView: UIView!
     @IBOutlet var filterView: UIView!
     @IBOutlet var bottomView: UIView!
     @IBOutlet var mainImgView: UIImageView!
@@ -13,6 +14,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet var sharebtn: UIButton!
     @IBOutlet var intensityView: UIView!
     @IBOutlet var editSlider: UISlider!
+    @IBOutlet var editOptionbtn: UIButton!
     
     var originalImg : UIImage?
     var filteredImg : UIImage?
@@ -23,15 +25,28 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         originalImg = mainImgView.image
+        comparebtn.isEnabled = false
+        editOptionbtn.isEnabled = false
         filterView.backgroundColor = UIColor.white.withAlphaComponent(0.5)
         filterView.translatesAutoresizingMaskIntoConstraints = false
         intensityView.backgroundColor = nil
         intensityView.translatesAutoresizingMaskIntoConstraints = false
+        ogTxtView.backgroundColor = UIColor.white.withAlphaComponent(0.4)
+        ogTxtView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func showOgTxt() {
+        view.addSubview(ogTxtView)
+        let leftConst = ogTxtView.leftAnchor.constraint(equalTo: view.leftAnchor)
+        let topConst = ogTxtView.topAnchor.constraint(equalTo: view.topAnchor)
+        let heightConst = ogTxtView.heightAnchor.constraint(equalToConstant: 44)
+        NSLayoutConstraint.activate([leftConst, topConst, heightConst])
+        view.layoutIfNeeded()
     }
     
     @IBAction func newPhoto(_ sender: UIButton) {
@@ -51,7 +66,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         camera.delegate = self
         camera.sourceType = .camera
         present(camera, animated: true, completion: nil)
-        originalImg = mainImgView.image
     }
     
     func bringUpAlbum() {
@@ -59,14 +73,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         camera.delegate = self
         camera.sourceType = .photoLibrary
         present(camera, animated: true, completion: nil)
-        originalImg = mainImgView.image
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         dismiss(animated: true, completion: nil)
         let pickedImg = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
         mainImgView.image = pickedImg
-        originalImg = mainImgView.image
+        originalImg = pickedImg
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -98,11 +111,57 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         filterView.removeFromSuperview()
     }
     
+    func incContrast(image: UIImage, intensity: Double) -> (UIImage) {
+        
+        
+        let rgbaImage = RGBAImage(image: image)!
+        var tRed = 0
+        var tGreen = 0
+        var tBlue = 0
+        for y in 0..<rgbaImage.height {
+            for x in 0..<rgbaImage.width {
+                let index = y * rgbaImage.width + x
+                let pixel = rgbaImage.pixels[index]
+                tRed += Int(pixel.red)
+                tGreen += Int(pixel.green)
+                tBlue += Int(pixel.blue)
+            }
+        }
+        
+        let pCount = rgbaImage.width * rgbaImage.height
+        let avgRed = tRed / pCount
+        let avgGreen = tGreen / pCount
+        let avgBlue = tBlue / pCount
+        let sum = avgRed + avgGreen + avgBlue
+        
+        for y in 0..<rgbaImage.height {
+            for x in 0..<rgbaImage.width {
+                let index = y * rgbaImage.width + x
+                var pixel = rgbaImage.pixels[index]
+                let rDelta = Double(pixel.red) - Double(avgRed)
+                let gDelta = Double(pixel.green) - Double(avgGreen)
+                let bDelta = Double(pixel.blue) - Double(avgBlue)
+                //initialized with passed or default Contrast Value
+                var modifier = intensity
+                if(Int(pixel.red) + Int(pixel.green) + Int(pixel.blue) < sum )
+                {
+                    modifier = 1
+                }
+                pixel.red = UInt8(max(min(255,Double(avgRed) + modifier * rDelta),0))
+                pixel.green = UInt8(max(min(255,Double(avgGreen) + modifier * gDelta),0))
+                pixel.blue = UInt8(max(min(255,Double(avgBlue) + modifier * bDelta),0))
+                rgbaImage.pixels[index] = pixel
+            }
+        }
+        return rgbaImage.toUIImage()!
+    }
+    
     @IBAction func sepiaFilter(_ sender: UIButton) {
         editSlider.minimumValue = -0.5
         editSlider.maximumValue = 1
         editSlider.value = 0.3
         currFilter = "sepia"
+        editOptionbtn.isEnabled = true
         UIView.animate(withDuration: 1, animations: {
             self.filteredImg = self.sepiaFilter(image: self.originalImg!, intensity: 0)
             self.mainImgView.image = self.filteredImg
@@ -137,6 +196,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         editSlider.maximumValue = 40
         editSlider.value = 20
         currFilter = "grey"
+        editOptionbtn.isEnabled = true
         UIView.animate(withDuration: 1, animations: {
             self.filteredImg = self.greyScale(image: self.originalImg!, intensity: 3)
             self.mainImgView.image = self.filteredImg
@@ -165,6 +225,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             mainImgView.image = filteredImg
             sender.isSelected = false
         } else {
+            editOptionbtn.isEnabled = false
             mainImgView.image = originalImg
             sender.isSelected = true
         }

@@ -109,12 +109,14 @@
                     <connections>
                         <outlet property="bottomView" destination="JNF-wb-wwY" id="erj-ay-Jdu"/>
                         <outlet property="comparebtn" destination="tPg-2N-f93" id="9LN-lA-9VX"/>
+                        <outlet property="editOptionbtn" destination="myS-6k-z4T" id="NjY-If-xMx"/>
                         <outlet property="editSlider" destination="NeM-10-NMB" id="dMG-jb-hTS"/>
                         <outlet property="filterView" destination="KU8-ct-Jxq" id="0qv-TV-28p"/>
                         <outlet property="filterbtn" destination="C6B-1F-j0K" id="eBO-YL-DlS"/>
                         <outlet property="imgPickerbtn" destination="kPg-yq-mNp" id="10i-Lx-PHl"/>
                         <outlet property="intensityView" destination="f7L-co-ANT" id="8Hf-R2-9Qj"/>
                         <outlet property="mainImgView" destination="aND-Em-4Dd" id="gmW-sZ-tRI"/>
+                        <outlet property="ogTxtView" destination="zpQ-KE-Xy1" id="zsg-rR-Qus"/>
                         <outlet property="sharebtn" destination="Leg-ry-Zqw" id="8MY-Cr-buX"/>
                     </connections>
                 </viewController>
@@ -185,6 +187,20 @@
                         <constraint firstItem="NeM-10-NMB" firstAttribute="centerX" secondItem="f7L-co-ANT" secondAttribute="centerX" id="cg2-Ai-2wN"/>
                         <constraint firstAttribute="bottom" secondItem="NeM-10-NMB" secondAttribute="bottom" constant="2" id="tjA-7O-1MQ"/>
                     </constraints>
+                </view>
+                <view contentMode="scaleToFill" id="zpQ-KE-Xy1">
+                    <rect key="frame" x="0.0" y="0.0" width="125" height="34"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <subviews>
+                        <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Original" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="caM-O6-AMG">
+                            <rect key="frame" x="0.0" y="0.0" width="125" height="35"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                            <textInputTraits key="textInputTraits"/>
+                        </textField>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 </view>
             </objects>
             <point key="canvasLocation" x="388" y="329"/>
