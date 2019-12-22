@@ -40,6 +40,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func share(_ sender: UIButton) {
+        let shareWindow = UIActivityViewController(activityItems: [mainImgView.image!], applicationActivities: nil)
+        present(shareWindow, animated: true, completion: nil)
+    }
+    
     func showOgTxt() {
         view.addSubview(ogTxtView)
         let leftConst = ogTxtView.leftAnchor.constraint(equalTo: view.leftAnchor)
