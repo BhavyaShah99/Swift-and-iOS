@@ -31,7 +31,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         filterView.translatesAutoresizingMaskIntoConstraints = false
         intensityView.backgroundColor = nil
         intensityView.translatesAutoresizingMaskIntoConstraints = false
-        ogTxtView.backgroundColor = UIColor.white.withAlphaComponent(0.4)
+        ogTxtView.backgroundColor = UIColor.black.withAlphaComponent(0.4)
         ogTxtView.translatesAutoresizingMaskIntoConstraints = false
     }
     
@@ -52,6 +52,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let heightConst = ogTxtView.heightAnchor.constraint(equalToConstant: 44)
         NSLayoutConstraint.activate([leftConst, topConst, heightConst])
         view.layoutIfNeeded()
+    }
+    
+    func hideOgTxt() {
+        ogTxtView.removeFromSuperview()
     }
     
     @IBAction func newPhoto(_ sender: UIButton) {
@@ -85,6 +89,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let pickedImg = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
         mainImgView.image = pickedImg
         originalImg = pickedImg
+        hideOgTxt()
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -117,6 +122,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func red(_ sender: UIButton) {
+        hideOgTxt()
         editSlider.minimumValue = 1
         editSlider.maximumValue = 5
         editSlider.value = 2.5
@@ -154,6 +160,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func green(_ sender: UIButton) {
+        hideOgTxt()
         editSlider.minimumValue = 1
         editSlider.maximumValue = 5
         editSlider.value = 2.5
@@ -191,6 +198,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func contrast(_ sender: UIButton) {
+        hideOgTxt()
         editSlider.minimumValue = -10
         editSlider.maximumValue = 1000
         editSlider.value = 400
@@ -244,6 +252,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func sepiaFilter(_ sender: UIButton) {
+        hideOgTxt()
         editSlider.minimumValue = -0.5
         editSlider.maximumValue = 1
         editSlider.value = 0.3
@@ -279,6 +288,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func greyscaleFilter(_ sender: UIButton) {
+        hideOgTxt()
         editSlider.minimumValue = -5
         editSlider.maximumValue = 40
         editSlider.value = 15
@@ -309,11 +319,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBAction func compare(_ sender: UIButton) {
         if(sender.isSelected){
+            hideOgTxt()
             mainImgView.image = filteredImg
             sender.isSelected = false
         } else {
             editOptionbtn.isEnabled = false
             mainImgView.image = originalImg
+            showOgTxt()
             sender.isSelected = true
         }
     }
