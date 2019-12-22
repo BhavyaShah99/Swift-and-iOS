@@ -18,14 +18,15 @@ class Filters {
     
     func applyFilters() -> (UIImage) {
         var retImg: UIImage = UIImage()
-        if(filtName=="sepia") {
-            retImg = sepiaEffect(image:img)
-        }
-        else if (filtName=="contrast") {
+        switch filtName {
+        case "sepia":
+            retImg = sepiaEffect(image: img)
+        case "contrast":
             retImg = incContrast(image:img)
-        }
-        else if(filtName=="greyscale") {
+        case "greyscale":
             retImg = greyScale(image:img)
+        default:
+            retImg = img
         }
         return retImg
     }
@@ -108,10 +109,10 @@ class Filters {
             for x in 0..<rgbaImage.width {
                 let index = y * rgbaImage.width + x
                 var pixel = rgbaImage.pixels[index]
-                let avgColor = Double(Int(pixel.red) + Int(pixel.green) + Int(pixel.blue)) / 3.0
-                pixel.red = UInt8(avgColor)
-                pixel.green = UInt8(avgColor)
-                pixel.blue = UInt8(avgColor)
+                let avgColor = Double(Int(pixel.red) + Int(pixel.green) + Int(pixel.blue)) / Double(modVal)
+                pixel.red = UInt8(max(min(255,avgColor),0))
+                pixel.green = UInt8(max(min(255,avgColor),0))
+                pixel.blue = UInt8(max(min(255,avgColor),0))
                 
                 rgbaImage.pixels[index] = pixel
                 
@@ -126,6 +127,6 @@ class Filters {
 var a : Filters = Filters(img: image, filtName: "sepia", modVal: 60)
 var filteredImg = a.applyFilters()
 
-filteredImg = Filters(img: image, filtName: "contrast", modVal: 40).applyFilters()
-filteredImg = Filters(img: image, filtName: "greyscale").applyFilters()
+filteredImg = Filters(img: image, filtName: "contrast", modVal: -100).applyFilters()
+filteredImg = Filters(img: image, filtName: "greyscale",modVal: -5).applyFilters()
 
