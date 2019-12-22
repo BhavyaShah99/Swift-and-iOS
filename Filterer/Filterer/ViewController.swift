@@ -129,7 +129,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         editSlider.minimumValue = 1
         editSlider.maximumValue = 5
         editSlider.value = 2.5
-        currFilter = "red"
+        currFilter = "green"
         editOptionbtn.isEnabled = true
         UIView.animate(withDuration: 1, animations: {
             self.filteredImg = self.green(image: self.originalImg!, intensity: 2.5)
@@ -325,10 +325,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             mainImgView.image = greyScale(image: originalImg!, intensity: Double(sender.value))
         case "contrast":
             mainImgView.image = incContrast(image: originalImg!, intensity: Double(sender.value))
-        case "red":
-            mainImgView.image = red(image: originalImg!, intensity: Double(sender.value))
+        case "green":
+            mainImgView.image = green(image: originalImg!, intensity: Double(sender.value))
         default:
-            filterSliderVal = 0
+            mainImgView.image = originalImg
         }
     }
 }
