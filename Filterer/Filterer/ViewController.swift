@@ -117,12 +117,40 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @IBAction func red(_ sender: UIButton) {
-        //..............
+        editSlider.minimumValue = 1
+        editSlider.maximumValue = 5
+        editSlider.value = 2.5
+        currFilter = "green"
+        editOptionbtn.isEnabled = true
+        UIView.animate(withDuration: 1, animations: {
+            self.filteredImg = self.red(image: self.originalImg!, intensity: 2.5)
+            self.mainImgView.image = self.filteredImg
+            self.comparebtn.isEnabled = true
+        })
     }
     
     func red(image: UIImage, intensity: Double) -> UIImage {
-        //............
-        return image
+        let rgbaImage = RGBAImage(image: image)!
+        var tblue = 0
+        for y in 0..<rgbaImage.height {
+            for x in 0..<rgbaImage.width {
+                let index = y * rgbaImage.width + x
+                let pixel = rgbaImage.pixels[index]
+                tblue += Int(pixel.blue)
+            }
+        }
+        let avgblue = tblue / (rgbaImage.width * rgbaImage.height)
+        for y in 0..<rgbaImage.height {
+            for x in 0..<rgbaImage.width {
+                let index = y * rgbaImage.width + x
+                var pixel = rgbaImage.pixels[index]
+                let blueDiff = Int(pixel.blue) - avgblue
+                pixel.blue = UInt8( max (0, min (255, Double(blueDiff)*intensity)))
+                pixel.green = UInt8( max (0, min (255, Double(blueDiff)*intensity)))
+                rgbaImage.pixels[index] = pixel
+            }
+        }
+        return rgbaImage.toUIImage()!
     }
     
     @IBAction func green(_ sender: UIButton) {
@@ -141,13 +169,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     func green(image: UIImage, intensity: Double) -> UIImage {
         let rgbaImage = RGBAImage(image: image)!
         var tred = 0
-        var tblue = 0
         for y in 0..<rgbaImage.height {
             for x in 0..<rgbaImage.width {
                 let index = y * rgbaImage.width + x
                 let pixel = rgbaImage.pixels[index]
                 tred += Int(pixel.red)
-                tblue += Int(pixel.blue)
             }
         }
         let avgRed = tred / (rgbaImage.width * rgbaImage.height)
