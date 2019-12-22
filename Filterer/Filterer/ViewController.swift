@@ -116,27 +116,38 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         filterView.removeFromSuperview()
     }
     
-    @IBAction func red(_ sender: UIImage) {
-        editSlider.minimumValue = -10
-        editSlider.maximumValue = 1000
-        editSlider.value = 400
+    @IBAction func red(_ sender: UIButton) {
+        //..............
+    }
+    
+    func red(image: UIImage, intensity: Double) -> UIImage {
+        //............
+        return image
+    }
+    
+    @IBAction func green(_ sender: UIButton) {
+        editSlider.minimumValue = 1
+        editSlider.maximumValue = 5
+        editSlider.value = 2.5
         currFilter = "red"
         editOptionbtn.isEnabled = true
         UIView.animate(withDuration: 1, animations: {
-            self.filteredImg = self.red(image: self.originalImg!, intensity: 0)
+            self.filteredImg = self.green(image: self.originalImg!, intensity: 2.5)
             self.mainImgView.image = self.filteredImg
             self.comparebtn.isEnabled = true
         })
     }
     
-    func red(image: UIImage, intensity: Double) -> UIImage {
+    func green(image: UIImage, intensity: Double) -> UIImage {
         let rgbaImage = RGBAImage(image: image)!
         var tred = 0
+        var tblue = 0
         for y in 0..<rgbaImage.height {
             for x in 0..<rgbaImage.width {
                 let index = y * rgbaImage.width + x
                 let pixel = rgbaImage.pixels[index]
                 tred += Int(pixel.red)
+                tblue += Int(pixel.blue)
             }
         }
         let avgRed = tred / (rgbaImage.width * rgbaImage.height)
@@ -144,9 +155,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             for x in 0..<rgbaImage.width {
                 let index = y * rgbaImage.width + x
                 var pixel = rgbaImage.pixels[index]
-                pixel.red = UInt8(max(min(255,Double(avgRed)),0))
-                pixel.green = UInt8(max(min(255,Double(avgRed)),0))
-                pixel.blue = UInt8(max(min(255,Double(avgRed)),0))
+                let redDiff = Int(pixel.red) - avgRed
+                pixel.red = UInt8( max (0, min (255, Double(redDiff)*intensity)))
+                pixel.blue = UInt8( max (0, min (255, Double(redDiff)*intensity)))
                 rgbaImage.pixels[index] = pixel
             }
         }

@@ -145,6 +145,9 @@
                                     <state key="normal" title="Green">
                                         <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </state>
+                                    <connections>
+                                        <action selector="green:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mpk-ow-Fhf"/>
+                                    </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OtM-CG-Yit">
                                     <rect key="frame" x="297" y="0.0" width="149" height="110"/>
